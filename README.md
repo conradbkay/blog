@@ -1,8 +1,8 @@
 ### Hi there 👋
 
-[![GitHub stats](https://github-readme-stats.vercel.app/api?username=USA-kay&count_private=true)](https://github.com/USA-Kay)
+[![GitHub stats](https://github-readme-stats.vercel.app/api?username=USA-Kay&count_private=true)](https://github.com/USA-Kay)
 
-[![Top Langs](https://github-readme-stats.vercel.app/api/top-langs/?username=hanieas&count_private=true)](https://github.com/USA-Kay)
+[![Top Langs](https://github-readme-stats.vercel.app/api/top-langs/?username=USA-Kay&count_private=true)](https://github.com/USA-Kay)
 
 [![Wakatime stats](https://github-readme-stats.vercel.app/api/wakatime?username=Conradkay)](https://github.com/USA-Kay)
 <!--
