@@ -1,12 +1,12 @@
 ### Hi there 👋
 
-[![GitHub stats](https://github-readme-stats.vercel.app/api?username=USA-Kay&count_private=true)](https://github.com/USA-Kay)
+[![GitHub stats](https://github-readme-stats.vercel.app/api?username=conradbkay&count_private=true)](https://github.com/conradbkay)
 
-[![Top Langs](https://github-readme-stats.vercel.app/api/top-langs/?username=USA-Kay&count_private=true)](https://github.com/USA-Kay)
+[![Top Langs](https://github-readme-stats.vercel.app/api/top-langs/?username=conradbkay&count_private=true)](https://github.com/conradbkay)
 
-[![Wakatime stats](https://github-readme-stats.vercel.app/api/wakatime?username=Conradkay)](https://github.com/USA-Kay)
+[![Wakatime stats](https://github-readme-stats.vercel.app/api/wakatime?username=Conradkay)](https://github.com/conradbkay)
 <!--
-**USA-Kay/USA-Kay** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
+**conradbkay/conradbkay** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
 
 Here are some ideas to get you started:
 
