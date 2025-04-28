@@ -1,6 +1,6 @@
 # Setup
 
-Putting this here because README shows on github profile
+just for me, putting this here because README shows on github profile
 
 ## Linux
 
