@@ -1,1 +1,1 @@
-Sitemap: https://conradbkay.github.io/conradbkay/sitemap.xml
+Sitemap: https://conradbkay.github.io/blog/sitemap.xml

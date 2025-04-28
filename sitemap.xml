@@ -1,23 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://conradbkay.github.io/conradbkay/posts/welcome/index.html</loc>
-    <lastmod>2025-03-22T06:48:44.340Z</lastmod>
+    <loc>https://conradbkay.github.io/blog/about.html</loc>
+    <lastmod>2025-04-25T02:11:54.170Z</lastmod>
   </url>
   <url>
-    <loc>https://conradbkay.github.io/conradbkay/about.html</loc>
-    <lastmod>2025-03-22T06:48:44.340Z</lastmod>
+    <loc>https://conradbkay.github.io/blog/setup.html</loc>
+    <lastmod>2025-03-22T07:03:25.780Z</lastmod>
   </url>
   <url>
-    <loc>https://conradbkay.github.io/conradbkay/setup.html</loc>
-    <lastmod>2025-03-22T06:48:44.340Z</lastmod>
+    <loc>https://conradbkay.github.io/blog/index.html</loc>
+    <lastmod>2025-04-26T18:42:38.400Z</lastmod>
   </url>
   <url>
-    <loc>https://conradbkay.github.io/conradbkay/index.html</loc>
-    <lastmod>2025-03-22T06:48:44.340Z</lastmod>
-  </url>
-  <url>
-    <loc>https://conradbkay.github.io/conradbkay/posts/post-with-code/index.html</loc>
-    <lastmod>2025-03-22T06:48:44.340Z</lastmod>
+    <loc>https://conradbkay.github.io/blog/posts/aicg/index.html</loc>
+    <lastmod>2025-04-28T01:30:27.984Z</lastmod>
   </url>
 </urlset>
