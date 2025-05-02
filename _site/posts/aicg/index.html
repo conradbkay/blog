@@ -9,7 +9,7 @@
 <meta name="author" content="Conrad Kay">
 <meta name="dcterms.date" content="2025-04-02">
 
-<title>Can a computer grade comic books? – conradkay</title>
+<title>Can a computer grade comic books? – conradkay.com</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -81,7 +81,7 @@ ul.task-list li input[type="checkbox"] {
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
     <a class="navbar-brand" href="../../index.html">
-    <span class="navbar-title">conradkay</span>
+    <span class="navbar-title">conradkay.com</span>
     </a>
   </div>
             <div id="quarto-search" class="" title="Search"></div>
@@ -149,12 +149,10 @@ ul.task-list li input[type="checkbox"] {
 
 
 
-<p>Starting this project I knew next to nothing about training a machine learning model. I’m a web developer, not really knowledgable in math or data science. As such I’ll try and make everything understandable with just general programming knowledge</p>
-<p>To me, if you want to actually . If you’re the opposite, LLMs are very appealing since you just use some API endpoint</p>
-<p>Any important math will come up, naturally.</p>
+<p>Starting this project I knew next to nothing about training a machine learning model. I’m a web developer, not particularly knowledgable in math or data science. As such, I’ll try and make everything understandable with just general programming knowledge.</p>
 <section id="background" class="level1">
 <h1>Background</h1>
-<p>This a comic encapsulated and graded by CGC, which was the first comic grading service and remains the most popular</p>
+<p>This a comic encapsulated and graded by CGC, which was the first comic grading service and remains the most popular.</p>
 <div>
 
 </div>
@@ -168,42 +166,53 @@ ul.task-list li input[type="checkbox"] {
 </div>
 </div>
 </div>
-<p>There are some companies (like AGS) which use AI to grade trading cards, but as far as I can tell the only attempt for comics is prompting ChatGPT. The problem is, huge multimodal models aren’t that good at grading comics. My theory would be that they rarely face a scenario in their training data where it matters much to get the grade right. What they do well is responding in natural language,</p>
-<p>well, why don’t we have AI grading comic books?</p>
-<ul>
+<p>There are some companies (like AGS) which use AI to grade trading cards, but as far as I can tell the only attempt for comics is prompting ChatGPT. The problem is, huge multimodal models aren’t that good at grading comics.</p>
+<p>I tried Claude (3.7 Sonnet) and ChatGPT on two older (1960s) 9.4s with good scans of the front and back cover. ChatGPT guessed 6.0 for both (8 grades off!), while Claude guessed 7.5 and 5.5-6.0. The language aspect was excellent, creating very reasonable sounding explanations, but a better word here would be “hallucination”. Not to knock their overall vision capabilities, there’s just something about the task in combination with their training method and data that makes it one of their weakest areas.</p>
+<p>Well, why hasn’t someone else tried AI grading comic books? That’s generally a pretty important question to ask when trying something that hasn’t been done before, especially if you don’t <em>really</em> know what you’re doing.</p>
+<ol type="1">
 <li>There’s no public dataset for images of physical comic books</li>
-<li>Several images are required per comic</li>
-<li>Some defects are very hard to detect from an image or two</li>
-<li>There’s a</li>
-<li>Comic covers have a lot of art and color</li>
+</ol>
+<ul>
+<li>It’s pretty easy to find images because so many people sell comics on the internet</li>
 </ul>
-<p>That last point is to me the most interesting. If you don’t have a reference copy available, there’s a level of “intelligence” required to . It’s the type of thing effortless/subconscious for humans, but difficult for computers and nearly impossible without deep learning.</p>
-<p>The image on the right is zoomed in at and above the “R”. Even though the number of pixels the defect takes up is the same, without the surrounding context it’s much more difficult to tell whether the top half has any defects. The lower portion is still somewhat trivial, since it’s rare for something to occur naturally.</p>
+<ol start="2" type="1">
+<li>Several images are necessary per comic</li>
+</ol>
+<ul>
+<li>This complicates things quite a bit, especially since the image count will be variable. As a start you can just use the whole front and back covers, maybe even joining them side-by-side to form a single image.</li>
+</ul>
+<ol start="3" type="1">
+<li>Advancements in ML and GPUs</li>
+</ol>
+<ul>
+<li>But excluding vision-language</li>
+</ul>
+<ol start="4" type="1">
+<li>Comic covers have a lot of art and color</li>
+</ol>
+<p>What I mean by that last point is that if you don’t have a reference copy available, there’s a level of “intelligence” required to . It’s the type of thing effortless/subconscious for humans, but difficult for computers and nearly impossible without deep learning.</p>
+<p>The image on the right is zoomed in at and above the “R”. Even though the number of pixels the defect takes up is the same, without the surrounding context it’s much more difficult to tell whether the top half has any defects. The lower portion is still somewhat trivial, since it’s rare for a shape like that to occur naturally.</p>
 <p><img src="detail-context.png" class="img-fluid"> <img src="detail.png" class="img-fluid"></p>
-</section>
-<section id="approach" class="level1">
-<h1>Approach</h1>
-<p>It’s very reasonable frame this as either a object detection problem.</p>
 </section>
 <section id="making-the-dataset" class="level1">
 <h1>Making the dataset</h1>
-<p>There’s a lot of graded comic books on the internet because lots of people sell them. Most of the photos are pretty bad though. The cases are so reflective in good lighting that they’re practically mirrors, which means often taking pictures at an off angle. A lot of listings don’t even include the back cover which is equally important to the grade.</p>
-<p>Remember that bias and consistency score? Now that we have a model, .</p>
+<p>On eBay there’s around 500k CGC graded comics, and maybe</p>
+<p>There’s basically 2 axes for the data: image quality and grade (label) quality</p>
+<p>What’s unique in this case is that there’s a strong inverse correlation. The more reputable the seller/grader, the more likely they . Sellers who don’t list a grade at all usually include plenty of good images so buyers can discern the condition for themselves.</p>
+<p>If the seller chooses not to list a grade at all, they . CGC graded comics are hard to take pictures of since the cases are so reflective, and they don’t fit in a typical printer’s scanner. Often the back cover won’t even be included, which is equally important to the grade.</p>
 </section>
 <section id="pre-processing-the-images" class="level1">
 <h1>Pre-processing the images</h1>
 <p>Ideally, we don’t want to waste any pixels which means</p>
-<p>Traditional computer vision techniques struggled quite a bit</p>
-<p>I ended up writing an algorithm to scan from each edge</p>
+<p>Traditional computer vision techniques struggled quite a bit. I tried a few approaches using OpenCV</p>
+<p>I ended up writing an algorithm to scan from each edge of the image,</p>
 <p>The bottom of the plastic casing has a lot of color changes before the comic which proved difficult to sort out since it’s not very consistent</p>
-<p>my proposed solution 1. Get a ton of images of already graded comics from the internet 2. throw a ton of compute/ML at it 3. combine each</p>
 <p>Most of the grade impact is in the 10% of pixels at the edges of each comic</p>
 </section>
 <section id="eda" class="level1">
 <h1>EDA</h1>
 <p>[Show a graph of grade by year (5 at a time) and also label type. Before and after filtering for ML input]</p>
 <p>Year is extremely correlated. Cheaper books aren’t worth grading unless a high grade is expected (often 9.8 or bust)</p>
-<p>We could account for the imbalance in our loss function. Another approach is making our dataset more concentrated on outliers</p>
 </section>
 <section id="pre-trained-models" class="level1">
 <h1>Pre-trained models</h1>
@@ -215,12 +224,19 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="benchmark" class="level1">
 <h1>Benchmark</h1>
-<p>it’s always good to start with an exceedingly simple baseline. Guessing a year’s average on a training dataset of just CGC comics results in an MAE of 1.02</p>
-<p>The next logical step is to see how well people do, and luckily there’s an entire forum of people asking for grades, often posting the official results when they come back. The only issue is that the average comic will be different, since people might only post their most expensive submissions or anything particularly “tough” to grade.</p>
-<p>for 151 guesses over 34 posts the MAE was 0.80, and taking the average guess for each post results in a MAE of 0.74.</p>
-<p>MAE stands for mean absolute error, basically how far off a guess is on average</p>
+<p>The simplest metric I’m using is mean absolute error (MAE), basically how far off a guess is on average on the 0.5-10 scale. If I had to guess,</p>
+<p>Guessing the dataset Avg -</p>
+<p>Guessing based on each comic’s publishing year - 1.02 MAE</p>
+<p>Forums (151 high quality, different from dataset) - 0.80 (individual) 0.74 (group averaged)</p>
+<p>Conrad (~50 full-size) - 0.55</p>
+<p>dinov2-base (512x512 8 cols) Pro71k - 0.51 dinov2-base (256x512 per img) Pro71k -<br>
+dinov2-large (384x768 per img) Pro71k -</p>
+<p>it’s always good to start with an exceedingly simple baseline. Guessing a year’s average on a training dataset of just CGC comics results in an MAE of 1.02.</p>
+<p>The next logical step is to see how well people do, and luckily there’s an entire forum of people asking for grades, often posting the official results when they come back from CGC. The only potential issue is that the average comic posted there could be different, since people are biased towards posting their most expensive submissions or anything particularly “tough” to grade.</p>
+<p>for 151 guesses over 34 posts the MAE was 0.80, and taking the average guess for each post results in a MAE of 0.74</p>
 <p>You can see how well you do on the dataset here <a href="https://www.conradkay.com/grade" class="uri">https://www.conradkay.com/grade</a></p>
-<p>My MAE on the dataset is around 0.55. I used the high-res scans and took 15 seconds on average which is very short.</p>
+<p>A validation set. This should usually be different in some way than what model trains on, but still representative of you problem. I made it have a more balanced distribution of grades, and with less correlation between year and grade</p>
+<p>My MAE on the validation set is around 0.55</p>
 </section>
 <section id="grad-cam" class="level1">
 <h1>Grad-CAM</h1>
@@ -230,8 +246,13 @@ ul.task-list li input[type="checkbox"] {
 <figcaption>The front and back cover happen to be almost identical for this comic, so it looks a bit like certain columns were duplicated</figcaption>
 </figure>
 </div>
-<p>Generating these visualizations is fairly simple, in both code and computation. We force PyTorch to do some calculus measuring how much each region contributes to the model’s output, which gets normalized and reshaped into basically a grayscale image matching our input image’s dimensions. OpenCV makes it easy to use a colormap (JET) so that instead of displaying black to white, it shows blue to yellow to red</p>
-<p>These give a way to basically check the model’s work. If it misses anything that seems significant, the grade is probably lower than it predicts. The model paying attention to things which aren’t defects is more nuanced. You could imagine that for a flawless comic, the attention map</p>
+<p>Generating these visualizations is fairly simple, in both code and computation.</p>
+<ul>
+<li>We can force PyTorch to do some calculus measuring much each region impacts the probability it gives for a specific grade</li>
+<li>That can be normalized and reshaped into a grayscale image matching our input image’s dimensions</li>
+<li>OpenCV makes it easy to use a colormap (Turbo) so that instead of displaying black to white, it shows blue to yellow to red</li>
+</ul>
+<p>These give a way to basically check the model’s work. If it misses anything that seems significant, the grade is probably lower than it predicts. The model paying attention to things which aren’t defects is more nuanced. Maybe for a flawless comic, sharp corners might be the most important thing it sees.</p>
 </section>
 <section id="more-data" class="level1">
 <h1>More Data</h1>
@@ -239,6 +260,7 @@ ul.task-list li input[type="checkbox"] {
 <p>Imagine we take several different graders . We can get a bias score, and a consistency score. It doesn’t matter much how accurate the model is, as long as it’s grades average out to being correct it will have a bias of 0, and we can arbitrarily set a consistency of 1 as equaling the model.</p>
 <p>Basically we can create a model to convert one of their grades into the probabilities our model would output on average. So if they gave a comic an 8.5, we might output 40% 8.5, 30% 9.0, 15% 8.0, 0.4% 9.6, etc.</p>
 <p>Essentially, that converts their grading format– which is usually the same 0.5-10, but often less precise or biased in a specific direction–into CGC’s format. It’s fairly unlikely. The only thing to really worry about is more specific biases. Training on worse/less applicable data first is a common theme in ML, and should greatly mitigate this.</p>
+<p>(bucketed how many listings belong to sellers with x-y total listings)</p>
 <p>An easy to increase data quality is to look at the biggest losses manually and decide whether to remove, relabel, or keep for future training runs. At the very least, this makes it very apparent what the model’s limitations and weaknesses are.</p>
 
 
