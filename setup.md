@@ -1,12 +1,10 @@
 # Setup
 
-just for me, putting this here because README shows on github profile
-
 ## Linux
 
 - python3 -m venv .venv
 - source .venv/bin/activate
-- python -m pip install jupyter
+- python -m pip install jupyter matplotlib plotly pandas python3 jupyter-cache
 
 ## Install Quarto
 
@@ -19,4 +17,12 @@ just for me, putting this here because README shows on github profile
 ## Hack for now
 
 - ( echo ""; echo 'export PATH=$PATH:~/.local/bin\n' ; echo "" ) >> ~/.profile
-source ~/.profile
+  source ~/.profile
+
+## Copy .ssh from windows
+
+run copy-ssh.sh
+
+## Cloudflare
+
+change SSL to (full)

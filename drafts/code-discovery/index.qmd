@@ -1,0 +1,9 @@
+---
+title: "Finding Good Code"
+author: "Conrad Kay"
+date: "2025-05-17"
+draft: true
+categories: []
+---
+
+If you search for code you'll mostly find tutorials , copywritten or AI generated article. Basically there's a lot of lowest common demoninator content to weed out.

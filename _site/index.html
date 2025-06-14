@@ -71,20 +71,48 @@ ul.task-list li input[type="checkbox"] {
 <script>
 
   window.document.addEventListener("DOMContentLoaded", function (_event) {
-    const listingTargetEl = window.document.querySelector('#listing-listing .list');
+    const listingTargetEl = window.document.querySelector('#listing-featured-listing .list');
     if (!listingTargetEl) {
       // No listing discovered, do not attach.
       return; 
     }
 
     const options = {
-      valueNames: ['listing-date','listing-title','listing-author','listing-image','listing-description','listing-categories',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
+      valueNames: ['listing-image','listing-date','listing-title','listing-word-count','listing-reading-time','listing-categories',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
       
-      searchColumns: ["listing-date","listing-title","listing-author","listing-image","listing-description","listing-categories"],
+      searchColumns: ["listing-date","listing-title","listing-author","listing-image","listing-description"],
     };
 
     window['quarto-listings'] = window['quarto-listings'] || {};
-    window['quarto-listings']['listing-listing'] = new List('listing-listing', options);
+    window['quarto-listings']['listing-featured-listing'] = new List('listing-featured-listing', options);
+
+    if (window['quarto-listing-loaded']) {
+      window['quarto-listing-loaded']();
+    }
+  });
+
+  window.addEventListener('hashchange',() => {
+    if (window['quarto-listing-loaded']) {
+      window['quarto-listing-loaded']();
+    }
+  })
+  
+
+  window.document.addEventListener("DOMContentLoaded", function (_event) {
+    const listingTargetEl = window.document.querySelector('#listing-notes-listing .list');
+    if (!listingTargetEl) {
+      // No listing discovered, do not attach.
+      return; 
+    }
+
+    const options = {
+      valueNames: ['listing-date','listing-title','listing-reading-time',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
+      
+      searchColumns: ["listing-title","listing-author","listing-date","listing-image","listing-description"],
+    };
+
+    window['quarto-listings'] = window['quarto-listings'] || {};
+    window['quarto-listings']['listing-notes-listing'] = new List('listing-notes-listing', options);
 
     if (window['quarto-listing-loaded']) {
       window['quarto-listing-loaded']();
@@ -167,13 +195,13 @@ window.Quarto = {
 <!-- content -->
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-page-left">
+    <div class="quarto-title column-page">
       <h1 class="title">Conrad Kay</h1>
                       </div>
   </div>
     
   
-  <div class="quarto-title-meta column-page-left">
+  <div class="quarto-title-meta column-page">
 
       
     
@@ -184,31 +212,49 @@ window.Quarto = {
   </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
-    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(1)</span></div><div class="category" data-category="TUw=">ML <span class="quarto-category-count">(1)</span></div></div></div>
+    
 <!-- main -->
-<main class="content quarto-banner-title-block column-page-left" id="quarto-document-content">
+<main class="content quarto-banner-title-block column-page" id="quarto-document-content">
 
 
 
 
 
+<style>
+#featured-listing {
+  border-left: 4px solid #3498db;
+  padding-left: 1.5rem;
+  margin-bottom: 3rem;
+}
 
+#notes-listing {
+  border-left: 4px solid #95a5a6;
+  padding-left: 1.5rem;
+}
 
+#notes-listing .quarto-listing-default .listing-item {
+  margin-bottom: 1rem;
+}
 
-
-<div class="quarto-listing quarto-listing-container-default" id="listing-listing">
+h2 {
+  color: #2c3e50;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+</style>
+<section id="featured" class="level2">
+<h2 class="anchored" data-anchor-id="featured">Featured</h2>
+<div id="listing-featured-listing" class="quarto-listing quarto-listing-container-default">
 <div class="list quarto-listing-default">
-<div class="quarto-post image-right" data-index="0" data-categories="TUw=" data-listing-date-sort="1743566400000" data-listing-file-modified-sort="1746120516942" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="8" data-listing-word-count-sort="1447">
+<div class="quarto-post image-right" data-index="0" data-categories="TUwlMkNmZWF0dXJlZA==" data-listing-date-sort="1743566400000" data-listing-file-modified-sort="1749855393628" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="13" data-listing-word-count-sort="2422">
 <div class="thumbnail">
 <p><a href="./posts/aicg/index.html" class="no-external"></a></p><a href="./posts/aicg/index.html" class="no-external">
-<p><img loading="lazy" src="./posts/aicg/cam-thumbnail.png" class="thumbnail-image"></p>
+<p><img loading="lazy" src="./posts/aicg/assets/cam-thumbnail.jpg" class="thumbnail-image"></p>
 </a><p><a href="./posts/aicg/index.html" class="no-external"></a></p>
 </div>
 <div class="body">
 <h3 class="no-anchor listing-title">
-<a href="./posts/aicg/index.html" class="no-external">Can a computer grade comic books?</a>
+<a href="./posts/aicg/index.html" class="no-external">Deep Comic Book Grading</a>
 </h3>
 <div class="listing-subtitle">
 <a href="./posts/aicg/index.html" class="no-external"></a>
@@ -217,9 +263,9 @@ window.Quarto = {
 <div class="listing-category" onclick="window.quartoListingCategory('TUw='); return false;">
 ML
 </div>
+<div class="listing-category" onclick="window.quartoListingCategory('ZmVhdHVyZWQ='); return false;">
+featured
 </div>
-<div class="listing-description">
-<a href="./posts/aicg/index.html" class="no-external">Starting this project I knew next to nothing about training a machine learning model. I’m a web developer, not particularly knowledgable in math or data science. As such…</a>
 </div>
 </div>
 <div class="metadata">
@@ -227,8 +273,11 @@ ML
 <div class="listing-date">
 Apr 2, 2025
 </div>
-<div class="listing-author">
-Conrad Kay
+<div class="listing-reading-time">
+13 min
+</div>
+<div class="metadata-value listing-word-count">
+2,422 words
 </div>
 </a>
 </div>
@@ -237,7 +286,42 @@ Conrad Kay
 <div class="listing-no-matching d-none">
 No matching items
 </div>
-</div></main> <!-- /main -->
+</div>
+</section>
+<section id="notes-tidbits" class="level2">
+<h2 class="anchored" data-anchor-id="notes-tidbits">Notes &amp; Tidbits</h2>
+<div id="listing-notes-listing" class="quarto-listing quarto-listing-container-grid">
+<div class="list grid quarto-listing-cols-3">
+<div class="g-col-1" data-index="0" data-categories="bm90ZXMlMkNwZXJmb3JtYW5jZQ==" data-listing-date-sort="1747368000000" data-listing-file-modified-sort="1749850971659" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="4" data-listing-word-count-sort="695">
+<a href="./posts/sorting/index.html" class="quarto-grid-link">
+<div class="quarto-grid-item card h-100 card-left">
+<div class="card-body post-contents">
+<h5 class="no-anchor card-title listing-title">
+Sorting Performance
+</h5>
+<div class="listing-reading-time card-text text-muted">
+4 min
+</div>
+<div class="card-attribution card-text-small end">
+<div class="listing-date">
+May 16, 2025
+</div>
+</div>
+</div>
+</div>
+</a>
+</div>
+</div>
+<div class="listing-no-matching d-none">
+No matching items
+</div>
+</div>
+
+
+
+</section>
+
+</main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {

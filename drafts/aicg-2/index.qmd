@@ -1,0 +1,35 @@
+---
+title: "Part 2 - can a computer grade comic books?"
+author: "Conrad Kay"
+date: "2025-04-25"
+draft: true
+categories: [ML]
+image: "press.jpg"
+---
+
+
+
+## Drafts
+
+Well, why don't we have AI grading comic books?
+
+1. There's no public dataset for images of physical comic books
+
+- It's pretty easy to find images because so many people sell comics on the internet
+
+2. Several images are necessary per comic
+
+- This complicates things quite a bit, especially since the image count will be variable. As a start you can just use the whole front and back covers, maybe even joining them side-by-side to form a single image.
+
+3. Advancements in ML and GPUs
+
+- 10 years ago you likely couldn't get good results,
+
+4. Comic covers have a lot of art and color
+
+What I mean by that last point is that if you don't have a reference copy available, there's a level of "intelligence" required to . It's the type of thing effortless/subconscious for humans, but difficult for computers and nearly impossible without deep learning.
+
+The image on the right is zoomed in at and above the "R". Even though the number of pixels the defect takes up is the same, without the surrounding context it's much more difficult to tell whether the top half has any defects. The lower portion is still somewhat trivial, since it's rare for a shape like that to occur naturally.
+
+![](detail-context.png)
+![](detail.png)

@@ -1,0 +1,33 @@
+---
+title: "Should you Rent or Buy GPUs?"
+author: "Conrad Kay"
+date: "2025-05-30"
+categories: [ML]
+image: "assets/cam-thumbnail.jpg"
+format: html
+echo: false
+---
+
+($2 H100s: How the GPU Rental Bubble Burst)<https://www.latent.space/p/gpu-bubble>. It's from October 2024 but things haven't changed a ton since then. 
+
+"And if the price falls below $1.65/hour, you are doomed to make losses on the H100 over the 5 years, as an infra provider" Funny enough $1.65 is the exact price <vast.ai> advertises (though it's a marketplace so prices vary), which makes it seem like an attractive proposition to reap the rewards of someone else's misfortune.
+
+Anyways, I snagged an instance with 2x RTX 5090s, 192GB of ram, and 192 CPU threads for $0.70 an hour on <vast.ai>. That's $5-6k in GPUs, a $3-4k CPU, and maybe $2k for other parts. 
+
+Power usage is around 1600w at full usage, or $0.12-0.60/h an hour in the US depending on where you live. That's essentially running a space heater which gets annoying in warm weather.
+
+So at best I'd spend $10k to save $0.58/h and take 17,241 hours (1.97 years) of usage to break even. 
+
+The development experience is considerably worse though, you have to . 
+
+Probably you'll want to use rclone with some cloud storage, I've been using Backblaze B2 which is S3 compatible, $6/TB/month, and gives free 3x egress.
+
+Disk storage is expensive though, $0.10-0.30 per hour per TB
+
+I see <https://hyperbolic.xyz/pricing> advertising flat $0.99/h H100s, which is encroaching on too good to be true, and I don't see much online about them. But <https://modal.com> is giving away $30 a month in free compute--obviously sweet sweet VC money. I'll update this when I end up trying those out. 
+
+Here's how I'd help someone choose between renting and buying GPUs:
+
+- The smaller your dataset, the better renting is. The best case is if you can just stream cloud data faster than your model processes it
+- You can find cheaper rentals if you can tolerate the operator potentially accessing your code or data. But most of the time [your source code is worthless](https://hiringengineersbook.com/post/autonomy/) and it would be a lot of work for them to go through everyone's stuff, likely with no return
+- Interruptible/spot instances can be a lot cheaper, but you need relatively fast setup, and a way to save and load your progress

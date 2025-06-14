@@ -1,0 +1,27 @@
+---
+title: "50 Days of Estimating "
+author: "Conrad Kay"
+date: "2025-06-11"
+draft: true
+categories: []
+---
+
+I've mostly worked on my own projects, so I haven't *needed* to give that many estimates.
+
+The plan is as follows: before I touch any code I'll specify a task, do some planning, then estimate a median and 90th percentile for how long I think it'll take. When I'm done I'll write a bit about how it went and what caused any slowdowns
+
+At the very least I suspect 
+
+It'll be nice to have data for what I should multiply my intuited estimates by. I'll try my best but we all know it'll be > 1 because...
+
+> Hofstadter's law: It always takes longer than you expect, even when you take into account Hofstadter's law.
+
+I started a basic project management repo 6 years ago now, just to learn fullstack web dev.
+
+It was on Heroku back when they had a free tier, so the first task will be to get it hosted again. I don't feel like paying for more domains so it'll live at <http://mantella.conradkay.com/>. 
+
+I also want to use pm2, Dockerize it, and make deploying to prod take 1 command. Sounds like maybe 2 hours to me. Nothing crazy and I've gone through most of the headaches before so I'll only double that to 4 hours for the p90.
+
+![](assets/task-1-time.jpg)
+
+Smashed it. 79 minutes out of the expected 120. I ended up refactoring some code and fixing a bug with the text editor, which I hadn't thought about doing doing.

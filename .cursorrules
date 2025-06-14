@@ -1,0 +1,74 @@
+# Blog
+
+This is my blog, built using Quarto which uses pandoc under the hood and renders to html/css/js
+
+You shouldn't change any of my writing, but you can tell me suggestions if they're more technical in nature
+
+Mostly you'll work on integrated code blocks, or doing any terminal work in linux like converting images, or deployment. Before you take any potentially destructive actions, always make a temporary backup
+
+## Plots
+
+Generally for any data science/ML work, use python. Otherwise use JS/TS 
+
+Prefer using plotly for python, but seaborn or matplotlib are okay if you have a better idea how to implement them for the specific task
+
+If the snippet/post is in JS/TS, always use JS, never python for the plotting
+
+Quarto comes with Observable JS and Observable Plot which are very powerful, and you shouldn't ever (need to) install anything from NPM. Here's an example usage which creates several graphs and inputs:
+
+```{ojs}
+//| output: false
+
+data = FileAttachment("penguins.csv")
+  .csv({ typed: true })
+
+filtered = data.filter(function(penguin) {
+  return bill_length_min < penguin.bill_length_mm &&
+         islands.includes(penguin.island);
+})
+```
+
+# {.sidebar}
+
+![](images/penguins.png){width="80%"}
+
+```{ojs}
+viewof bill_length_min = Inputs.range(
+  [32, 50], 
+  {value: 35, step: 1, label: "Bill length (min):"}
+)
+viewof islands = Inputs.checkbox(
+  ["Torgersen", "Biscoe", "Dream"], 
+  { value: ["Torgersen", "Biscoe", "Dream"], 
+    label: "Islands:"
+  }
+)
+```
+
+# Plot
+
+```{ojs}
+Plot.rectY(filtered, 
+  Plot.binX(
+    {y: "count"}, 
+    {x: "body_mass_g", fill: "species", thresholds: 20}
+  ))
+  .plot({
+    facet: {
+      data: filtered,
+      x: "sex",
+      y: "species",
+      marginRight: 80
+    },
+    marks: [
+      Plot.frame(),
+    ]
+  }
+)
+```
+
+# Data
+
+```{ojs}
+Inputs.table(filtered)
+`

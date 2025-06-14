@@ -1,45 +1,31 @@
 [
   {
-    "objectID": "deploy.html",
-    "href": "deploy.html",
-    "title": "Deploy",
+    "objectID": "posts/sorting/index.html",
+    "href": "posts/sorting/index.html",
+    "title": "Sorting Performance",
     "section": "",
-    "text": "Deploy\nquarto render\nzip site\nscp -P 1987 \\wsl$_site.zip root@68.183.152.192:/var/www/conradkay.com"
+    "text": "Results are for sorting n random floats generated using Math.random() in Node.js and random.random() in Python 3.12\nPython 3.11 introduced Powersort, an improvement on Timsort, but it isn’t that much faster for most cases.\nEach result is averaged over 10 consecutive runs with newly randomized arrays each time.\nPython was 10-20x slower than NumPy, and Node.js was 2-3x slower than Python\n\nrawData = FileAttachment(\"benchmark_data.json\").json()\n\n\nlanguages = [\"Python\", \"JavaScript\", \"NumPy\"]\n\n// Create combined dataset with language labels for sorting performance, filtering out n &lt; 256\ncombinedSortData = languages.flatMap(l =&gt; rawData[l.toLowerCase()].map(d =&gt; ({language: l, time: d.sortTime, n: d.n}))).filter(d =&gt; d.n &gt;= 256)\n\nPlot.plot({\n  title: \"Sorting Performance in Python, JavaScript, and NumPy\",\n  width: 800,\n  height: 500,\n  x: {\n    label: \"Input size (random floats)\",\n    type: \"log\",\n    base: 2,\n    domain: [256, d3.max(combinedSortData, d =&gt; d.n)]\n  },\n  y: {\n    label: \"Time (ms)\",\n    type: \"log\",\n    base: 2\n  },\n  color: {\n    legend: true,\n    domain: [\"Python\", \"JavaScript\", \"NumPy\"],\n    range: [\"#d73027\", \"#377eb8\", \"#4daf4a\"]\n  },\n  marks: [\n    // Lines for each language\n    Plot.line(combinedSortData, {\n      x: \"n\", \n      y: \"time\", \n      stroke: \"language\",\n      strokeWidth: 2\n    }),\n    \n    // Dots for each data point\n    Plot.dot(combinedSortData, {\n      x: \"n\", \n      y: \"time\", \n      fill: \"language\",\n      r: 4\n    }),\n    \n    // Tooltip\n    Plot.tip(combinedSortData, Plot.pointer({\n      x: \"n\",\n      y: \"time\",\n      title: d =&gt; `${d.language}\\n${d.n.toLocaleString()} items\\n${d.time.toFixed(4)} ms`\n    }))\n      ]\n  })\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nI also tested set creating (new Set(arr) and set(arr)). This is how many times faster creating a set was compared to sorting.\nNumpy is skipped since it doesn’t really have sets. There’s set operations, and .unique but that creates a sorted array.\n\ncombinedRatioData = [\"Python\", \"JavaScript\"].flatMap(l =&gt; rawData[l.toLowerCase()].map(d =&gt; ({language: l, ratio: d.ratio, n: d.n}))).filter(d =&gt; d.n &gt;= 256)\n\nPlot.plot({\n  title: \"Set Creation vs Sorting Performance Ratio: Python vs JavaScript\",\n  width: 800,\n  height: 500,\n  x: {\n    label: \"Input size (random floats)\",\n    type: \"log\",\n    base: 2,\n    domain: [256, d3.max(combinedRatioData, d =&gt; d.n)]\n  },\n  y: {\n    label: \"Ratio (sort time / set time )\",\n    type: \"linear\",\n  },\n  color: {\n    legend: true,\n    domain: [\"Python\", \"JavaScript\"],\n    range: [\"#d73027\", \"#377eb8\"]\n  },\n  marks: [\n    // Horizontal line at y=1 for reference\n    Plot.ruleY([1], {stroke: \"#999\", strokeDasharray: \"3,3\"}),\n    \n    // Lines for each language\n    Plot.line(combinedRatioData, {\n      x: \"n\", \n      y: \"ratio\", \n      stroke: \"language\",\n      strokeWidth: 2\n    }),\n    \n    // Dots for each data point\n    Plot.dot(combinedRatioData, {\n      x: \"n\", \n      y: \"ratio\", \n      fill: \"language\",\n      r: 4\n    }),\n    \n    // Tooltip\n    Plot.tip(combinedRatioData, Plot.pointer({\n      x: \"n\",\n      y: \"ratio\",\n      title: d =&gt; `${d.language}\\n${d.n.toLocaleString()} items\\nRatio: ${d.ratio.toFixed(3)}`\n    }))\n  ]\n})\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nThe sorting rabbit hole goes very deep, as does performance and benchmarking, but this is enough that I typically won’t worry about having to sort arrays."
   },
   {
     "objectID": "index.html",
     "href": "index.html",
     "title": "Conrad Kay",
     "section": "",
-    "text": "Can a computer grade comic books?\n\n\n\n\n\n\nML\n\n\n\n\n\n\n\n\n\nApr 2, 2025\n\n\nConrad Kay\n\n\n\n\n\n\nNo matching items"
+    "text": "ML\n\n\nfeatured\n\n\n\n\n\n\nApr 2, 2025\n\n\n13 min\n\n\n2,422 words\n\n\n\n\n\n\nNo matching items"
   },
   {
-    "objectID": "setup.html",
-    "href": "setup.html",
-    "title": "Setup",
+    "objectID": "index.html#featured",
+    "href": "index.html#featured",
+    "title": "Conrad Kay",
     "section": "",
-    "text": "just for me, putting this here because README shows on github profile\n\n\n\npython3 -m venv .venv\nsource .venv/bin/activate\npython -m pip install jupyter\n\n\n\n\n\n(in ~)\nwget https://github.com/quarto-dev/quarto-cli/releases/download/v1.6.42/quarto-1.6.42-linux-amd64.tar.gz\nmkdir ~/opt\ntar -C ~/opt -xvzf quarto-1.6.42-linux-amd64.tar.gz\nln -s ~/opt/quarto-1.6.42/bin/quarto ~/.local/bin/quarto\n\n\n\n\n\n( echo ““; echo ‘export PATH=$PATH:~/.local/bin’ ; echo”” ) &gt;&gt; ~/.profile source ~/.profile"
+    "text": "ML\n\n\nfeatured\n\n\n\n\n\n\nApr 2, 2025\n\n\n13 min\n\n\n2,422 words\n\n\n\n\n\n\nNo matching items"
   },
   {
-    "objectID": "setup.html#linux",
-    "href": "setup.html#linux",
-    "title": "Setup",
-    "section": "",
-    "text": "python3 -m venv .venv\nsource .venv/bin/activate\npython -m pip install jupyter"
-  },
-  {
-    "objectID": "setup.html#install-quarto",
-    "href": "setup.html#install-quarto",
-    "title": "Setup",
-    "section": "",
-    "text": "(in ~)\nwget https://github.com/quarto-dev/quarto-cli/releases/download/v1.6.42/quarto-1.6.42-linux-amd64.tar.gz\nmkdir ~/opt\ntar -C ~/opt -xvzf quarto-1.6.42-linux-amd64.tar.gz\nln -s ~/opt/quarto-1.6.42/bin/quarto ~/.local/bin/quarto"
-  },
-  {
-    "objectID": "setup.html#hack-for-now",
-    "href": "setup.html#hack-for-now",
-    "title": "Setup",
-    "section": "",
-    "text": "( echo ““; echo ‘export PATH=$PATH:~/.local/bin’ ; echo”” ) &gt;&gt; ~/.profile source ~/.profile"
+    "objectID": "index.html#notes-tidbits",
+    "href": "index.html#notes-tidbits",
+    "title": "Conrad Kay",
+    "section": "Notes & Tidbits",
+    "text": "Notes & Tidbits\n\n\n\n\n\n\n\nSorting Performance\n\n\n4 min\n\n\n\nMay 16, 2025\n\n\n\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "about.html",
@@ -51,15 +37,50 @@
   {
     "objectID": "posts/aicg/index.html",
     "href": "posts/aicg/index.html",
-    "title": "Can a computer grade comic books?",
+    "title": "Deep Comic Book Grading",
     "section": "",
-    "text": "Starting this project I knew next to nothing about training a machine learning model. I’m a web developer, not particularly knowledgable in math or data science. As such, I’ll try and make everything understandable with just general programming knowledge.\n\nBackground\nThis a comic encapsulated and graded by CGC, which was the first comic grading service and remains the most popular.\n\n\n\n\n\n\n\n\n\n\n\n\n\nThere are some companies (like AGS) which use AI to grade trading cards, but as far as I can tell the only attempt for comics is prompting ChatGPT. The problem is, huge multimodal models aren’t that good at grading comics.\nI tried Claude (3.7 Sonnet) and ChatGPT on two older (1960s) 9.4s with good scans of the front and back cover. ChatGPT guessed 6.0 for both (8 grades off!), while Claude guessed 7.5 and 5.5-6.0. The language aspect was excellent, creating very reasonable sounding explanations, but a better word here would be “hallucination”. Not to knock their overall vision capabilities, there’s just something about the task in combination with their training method and data that makes it one of their weakest areas.\nWell, why hasn’t someone else tried AI grading comic books? That’s generally a pretty important question to ask when trying something that hasn’t been done before, especially if you don’t really know what you’re doing.\n\nThere’s no public dataset for images of physical comic books\n\n\nIt’s pretty easy to find images because so many people sell comics on the internet\n\n\nSeveral images are necessary per comic\n\n\nThis complicates things quite a bit, especially since the image count will be variable. As a start you can just use the whole front and back covers, maybe even joining them side-by-side to form a single image.\n\n\nAdvancements in ML and GPUs\n\n\nBut excluding vision-language\n\n\nComic covers have a lot of art and color\n\nWhat I mean by that last point is that if you don’t have a reference copy available, there’s a level of “intelligence” required to . It’s the type of thing effortless/subconscious for humans, but difficult for computers and nearly impossible without deep learning.\nThe image on the right is zoomed in at and above the “R”. Even though the number of pixels the defect takes up is the same, without the surrounding context it’s much more difficult to tell whether the top half has any defects. The lower portion is still somewhat trivial, since it’s rare for a shape like that to occur naturally.\n \n\n\nMaking the dataset\nOn eBay there’s around 500k CGC graded comics, and maybe\nThere’s basically 2 axes for the data: image quality and grade (label) quality\nWhat’s unique in this case is that there’s a strong inverse correlation. The more reputable the seller/grader, the more likely they . Sellers who don’t list a grade at all usually include plenty of good images so buyers can discern the condition for themselves.\nIf the seller chooses not to list a grade at all, they . CGC graded comics are hard to take pictures of since the cases are so reflective, and they don’t fit in a typical printer’s scanner. Often the back cover won’t even be included, which is equally important to the grade.\n\n\nPre-processing the images\nIdeally, we don’t want to waste any pixels which means\nTraditional computer vision techniques struggled quite a bit. I tried a few approaches using OpenCV\nI ended up writing an algorithm to scan from each edge of the image,\nThe bottom of the plastic casing has a lot of color changes before the comic which proved difficult to sort out since it’s not very consistent\nMost of the grade impact is in the 10% of pixels at the edges of each comic\n\n\nEDA\n[Show a graph of grade by year (5 at a time) and also label type. Before and after filtering for ML input]\nYear is extremely correlated. Cheaper books aren’t worth grading unless a high grade is expected (often 9.8 or bust)\n\n\nPre-trained models\nAll the models I’ve used so far had already been trained on a ton of natural images. Even though most of what they learned isn’t applicable to the task, almost anything is better than starting from scratch.\nThe DINO method https://arxiv.org/abs/2104.14294 is really interesting, and I found models trained using it to perform very well. Just training a simple classifier on top of a pre-trained models 384 output\nThe approach of not using any label is quite fascinating. As a crude analogy, compare it to giving a bunch of paintings to someone who doesn’t know much about art, and having them sort it into groups/piles.\nIf you gave several versions of painting, with random flipping/mirroring, cropping, hue changes, etc. they’ll probably do worse, but are forced to learn more robust ways to categorize paintings. Maybe you merge two paintings somehow, and expect them to place it somewhere in-between the two groups.\nIf instead of one person, it was closer to a game of telephone where nobody spoke a common language, they’d probably learn to just focus on the important parts\n\n\nBenchmark\nThe simplest metric I’m using is mean absolute error (MAE), basically how far off a guess is on average on the 0.5-10 scale. If I had to guess,\nGuessing the dataset Avg -\nGuessing based on each comic’s publishing year - 1.02 MAE\nForums (151 high quality, different from dataset) - 0.80 (individual) 0.74 (group averaged)\nConrad (~50 full-size) - 0.55\ndinov2-base (512x512 8 cols) Pro71k - 0.51 dinov2-base (256x512 per img) Pro71k -\ndinov2-large (384x768 per img) Pro71k -\nit’s always good to start with an exceedingly simple baseline. Guessing a year’s average on a training dataset of just CGC comics results in an MAE of 1.02.\nThe next logical step is to see how well people do, and luckily there’s an entire forum of people asking for grades, often posting the official results when they come back from CGC. The only potential issue is that the average comic posted there could be different, since people are biased towards posting their most expensive submissions or anything particularly “tough” to grade.\nfor 151 guesses over 34 posts the MAE was 0.80, and taking the average guess for each post results in a MAE of 0.74\nYou can see how well you do on the dataset here https://www.conradkay.com/grade\nA validation set. This should usually be different in some way than what model trains on, but still representative of you problem. I made it have a more balanced distribution of grades, and with less correlation between year and grade\nMy MAE on the validation set is around 0.55\n\n\nGrad-CAM\n\n\n\nThe front and back cover happen to be almost identical for this comic, so it looks a bit like certain columns were duplicated\n\n\nGenerating these visualizations is fairly simple, in both code and computation.\n\nWe can force PyTorch to do some calculus measuring much each region impacts the probability it gives for a specific grade\nThat can be normalized and reshaped into a grayscale image matching our input image’s dimensions\nOpenCV makes it easy to use a colormap (Turbo) so that instead of displaying black to white, it shows blue to yellow to red\n\nThese give a way to basically check the model’s work. If it misses anything that seems significant, the grade is probably lower than it predicts. The model paying attention to things which aren’t defects is more nuanced. Maybe for a flawless comic, sharp corners might be the most important thing it sees.\n\n\nMore Data\nSo far the model has only been trained on already CGC/CBCS graded comics\nImagine we take several different graders . We can get a bias score, and a consistency score. It doesn’t matter much how accurate the model is, as long as it’s grades average out to being correct it will have a bias of 0, and we can arbitrarily set a consistency of 1 as equaling the model.\nBasically we can create a model to convert one of their grades into the probabilities our model would output on average. So if they gave a comic an 8.5, we might output 40% 8.5, 30% 9.0, 15% 8.0, 0.4% 9.6, etc.\nEssentially, that converts their grading format– which is usually the same 0.5-10, but often less precise or biased in a specific direction–into CGC’s format. It’s fairly unlikely. The only thing to really worry about is more specific biases. Training on worse/less applicable data first is a common theme in ML, and should greatly mitigate this.\n(bucketed how many listings belong to sellers with x-y total listings)\nAn easy to increase data quality is to look at the biggest losses manually and decide whether to remove, relabel, or keep for future training runs. At the very least, this makes it very apparent what the model’s limitations and weaknesses are."
+    "text": "Update: You can benchmark yourself against the model’s exact predictions here: https://ai.conradkay.com/grade\nAttempting this project as a web developer without a math or data science background was a long shot, but I ended up getting better results than I thought was possible."
   },
   {
-    "objectID": "posts/aicg-2/index.html",
-    "href": "posts/aicg-2/index.html",
-    "title": "Part 2 - can a computer grade comic books?",
-    "section": "",
-    "text": "Multiple outputs\nThere’s actually three dimensions for a graded comic\nYou may have notice the small “CREAM TO OFF-WHITE Pages” text\n\nBasically the only useful visual information is whatever tiny sliver of the interior pages we can see, and the year. Year of course because we’re measuring aging, but even more than that because comics stopped being printed on pulp/newsprint in the mid 90s, instead using a glossy paper that doesn’t age.\n“Restoration is the act of adding foreign material to a comic book through certain techniques to return its appearance to an ideal or original state” ([]https://www.cgccomics.com/resources/restoration/). Colloquially referred to as the “Purple Label of Death” since it kills the valuation of any comic unlucky enough to receive it.\nThe amount of data available is much more limited, since most comics are unrestored, and there’s 11 different types of restoration. Luckily the grading label itself says each type of restoration performed! So you can train a model to output the probability of each class separately\n\n\nOther dimensions\nCleaning and pressing are restoration methods that the grading companies allow\nA CGC 9.4 could come back a 9.8 after a clean and or press\n\nPressing inherently only works on defects which don’t affect color (mostly bends, indents, warping)\nThat means lighting differences from depth is what makes it visible, which is somewhat lacking from the 2d scans. From CGC themselves, “unfortunately, scans are not a reliable method of determining press potential”\nI’d argue the model giving grades post pressing is a bit more of a feature than a bug"
+    "objectID": "posts/aicg/index.html#gathering-data",
+    "href": "posts/aicg/index.html#gathering-data",
+    "title": "Deep Comic Book Grading",
+    "section": "Gathering Data",
+    "text": "Gathering Data\nGetting (good) data is the hardest part for most real-world ML projects. But there’s plenty of excellent datasets of all sizes available for free, and the process of obtaining data depends so much on the task that I get too in the weeds here. Essentially it was a lot of scraping sales listings.\nFor just CGC graded comics, I got ~2.1m pairs of images, or ~7TB of .jpg files which is rather annoying.\neBay listings have 0-12 images, each at most 1600x1600. Anyone can post on eBay so the images are very diverse and unstructured. I’m scraping the data for now, but to be usable for training they’d need additional filtering and processing."
+  },
+  {
+    "objectID": "posts/aicg/index.html#exploratory-data-analysis-eda",
+    "href": "posts/aicg/index.html#exploratory-data-analysis-eda",
+    "title": "Deep Comic Book Grading",
+    "section": "Exploratory Data Analysis (EDA)",
+    "text": "Exploratory Data Analysis (EDA)\nSome things to note about grading:\n\nThe front and back cover are equally important, but it’s rare for the interior pages to impact the grade\nManufacturing defects are mostly ignored except for grades above 9.8, which are extremely rare\nCheaper comics aren’t worth grading unless a high grade is expected (often 9.8 or bust)\nOlder comics are much more scarce, but therefore expensive and more likely to be graded\n\nI made a bunch of visualizations and reports to understand the data better. This heatmap is probably the most succinct"
+  },
+  {
+    "objectID": "posts/aicg/index.html#designing-a-dataset",
+    "href": "posts/aicg/index.html#designing-a-dataset",
+    "title": "Deep Comic Book Grading",
+    "section": "Designing a Dataset",
+    "text": "Designing a Dataset\nThere’s a few unique and interesting constraints here:\n\n\n\n\nA scoring based approach seemed natural\nEach year grouping is treated as a separate dataset, and an initial pass just determines the size of each.\nI made each year (range) a heap,\nThis maximizes image diversity, smooths the total distribution of grades, and limits the effectiveness of grading based on year or the specific comic\nThe validation set is created first on a random 10% of the data, so it can’t steal all the highest score examples. A better way than random splitting would be to make every data source (what site/seller) exclusive to either the training or validation set. That way it’s clear if the model doesn’t generalize to things like different camera usage, backgrounds, or scanner settings.\nI didn’t bother creating a test set since new data comes in fast enough I could just create one on the fly."
+  },
+  {
+    "objectID": "posts/aicg/index.html#takeaways",
+    "href": "posts/aicg/index.html#takeaways",
+    "title": "Deep Comic Book Grading",
+    "section": "Takeaways",
+    "text": "Takeaways\nFor everything I eventually figured out there was much trial-and-error, looking at data, analyzing failures, and getting stuck or confused.\nThe potentially huge advantage you can have over someone much more experienced in ML is specific knowledge about some domain, or unique access to data. There’s probably not something that immediately comes to mind but maybe you know someone, or having the proverbial “hammer” will make some “nail” stick out in the future."
+  },
+  {
+    "objectID": "posts/aicg/index.html#resources-i-found-useful",
+    "href": "posts/aicg/index.html#resources-i-found-useful",
+    "title": "Deep Comic Book Grading",
+    "section": "Resources I found useful",
+    "text": "Resources I found useful\nI made this blog with Quarto, which was easy to set up but seems very capable\nPython for Data Analysis by Wes McKinney (the creator of pandas)\n3blue1brown Deep Learning\nhttps://www.youtube.com/@AndrejKarpathy\nfast.ai Practical Deep Learning for Coders Course"
+  },
+  {
+    "objectID": "posts/aicg/index.html#technical-details",
+    "href": "posts/aicg/index.html#technical-details",
+    "title": "Deep Comic Book Grading",
+    "section": "Technical Details",
+    "text": "Technical Details\nProbably skip this part if you don’t have PyTorch or ML experience\nI found the FastAI defaults (which haven’t changed much in 7 years) really difficult to beat. There’s quite a bit of randomness in training, so even if I could get a slight improvement it’s hard to say whether it was just luck."
   }
 ]

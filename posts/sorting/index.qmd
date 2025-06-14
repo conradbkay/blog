@@ -1,0 +1,132 @@
+---
+title: "Sorting Performance"
+author: "Conrad Kay"
+date: "2025-05-16"
+draft: false
+format: html
+echo: false
+categories: [notes, performance]
+---
+
+Results are for sorting `n` random floats generated using `Math.random()` in Node.js and `random.random()` in Python 3.12
+
+Python 3.11 introduced [Powersort](https://www.youtube.com/watch?v=XjOnY-OLAPc), an improvement on Timsort, but it isn't that much faster for most cases.
+
+Each result is averaged over 10 consecutive runs with newly randomized arrays each time.
+
+Python was 10-20x slower than NumPy, and Node.js was 2-3x slower than Python
+
+```{ojs}
+rawData = FileAttachment("benchmark_data.json").json()
+
+
+languages = ["Python", "JavaScript", "NumPy"]
+
+// Create combined dataset with language labels for sorting performance, filtering out n < 256
+combinedSortData = languages.flatMap(l => rawData[l.toLowerCase()].map(d => ({language: l, time: d.sortTime, n: d.n}))).filter(d => d.n >= 256)
+
+Plot.plot({
+  title: "Sorting Performance in Python, JavaScript, and NumPy",
+  width: 800,
+  height: 500,
+  x: {
+    label: "Input size (random floats)",
+    type: "log",
+    base: 2,
+    domain: [256, d3.max(combinedSortData, d => d.n)]
+  },
+  y: {
+    label: "Time (ms)",
+    type: "log",
+    base: 2
+  },
+  color: {
+    legend: true,
+    domain: ["Python", "JavaScript", "NumPy"],
+    range: ["#d73027", "#377eb8", "#4daf4a"]
+  },
+  marks: [
+    // Lines for each language
+    Plot.line(combinedSortData, {
+      x: "n", 
+      y: "time", 
+      stroke: "language",
+      strokeWidth: 2
+    }),
+    
+    // Dots for each data point
+    Plot.dot(combinedSortData, {
+      x: "n", 
+      y: "time", 
+      fill: "language",
+      r: 4
+    }),
+    
+    // Tooltip
+    Plot.tip(combinedSortData, Plot.pointer({
+      x: "n",
+      y: "time",
+      title: d => `${d.language}\n${d.n.toLocaleString()} items\n${d.time.toFixed(4)} ms`
+    }))
+      ]
+  })
+```
+
+I also tested set creating (`new Set(arr)` and `set(arr)`). This is how many times faster creating a set was compared to sorting. 
+
+Numpy is skipped since it doesn't really have sets. There's set operations, and `.unique` but that creates a sorted array.
+
+```{ojs}
+// Create combined dataset for ratio comparison, filtering out n < 256 and excluding NumPy
+combinedRatioData = ["Python", "JavaScript"].flatMap(l => rawData[l.toLowerCase()].map(d => ({language: l, ratio: d.ratio, n: d.n}))).filter(d => d.n >= 256)
+
+Plot.plot({
+  title: "Set Creation vs Sorting Performance Ratio: Python vs JavaScript",
+  width: 800,
+  height: 500,
+  x: {
+    label: "Input size (random floats)",
+    type: "log",
+    base: 2,
+    domain: [256, d3.max(combinedRatioData, d => d.n)]
+  },
+  y: {
+    label: "Ratio (sort time / set time )",
+    type: "linear",
+  },
+  color: {
+    legend: true,
+    domain: ["Python", "JavaScript"],
+    range: ["#d73027", "#377eb8"]
+  },
+  marks: [
+    // Horizontal line at y=1 for reference
+    Plot.ruleY([1], {stroke: "#999", strokeDasharray: "3,3"}),
+    
+    // Lines for each language
+    Plot.line(combinedRatioData, {
+      x: "n", 
+      y: "ratio", 
+      stroke: "language",
+      strokeWidth: 2
+    }),
+    
+    // Dots for each data point
+    Plot.dot(combinedRatioData, {
+      x: "n", 
+      y: "ratio", 
+      fill: "language",
+      r: 4
+    }),
+    
+    // Tooltip
+    Plot.tip(combinedRatioData, Plot.pointer({
+      x: "n",
+      y: "ratio",
+      title: d => `${d.language}\n${d.n.toLocaleString()} items\nRatio: ${d.ratio.toFixed(3)}`
+    }))
+  ]
+})
+```
+
+The sorting rabbit hole goes very deep, as does performance and benchmarking, but this is enough that I typically won't worry about having to sort arrays.
