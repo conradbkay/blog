@@ -71,7 +71,7 @@ I made each year (range) a heap,
 
 This maximizes image diversity, smooths the total distribution of grades, and limits the effectiveness of grading based on year or the specific comic
 
-The validation set is created first on a random 10% of the data, so it can't steal all the highest score examples. A better way than random splitting would be to make every data source (what site/seller) exclusive to either the training or validation set. That way it's clear if the model doesn't generalize to things like different camera usage, backgrounds, or scanner settings.
+The validation set is created first from a random 10% of the data, so it can't steal all the highest score examples. A better way than random splitting would be to make every data source (what site/seller) exclusive to either the training or validation set. That way it's clear if the model doesn't generalize to things like different camera usage, backgrounds, or scanner settings.
 
 I didn't bother creating a test set since new data comes in fast enough I could just create one on the fly.
  
@@ -219,7 +219,7 @@ flowchart TD
 
     DB --> SORT["Canonization, Filtering, and Scoring"]
     %% Splitting
-    SORT --> DS["Create Validation Set (5k) then Training Sets (10k-1m)"]
+    SORT --> DS["Create Validation Set (10k) then Training Sets (10k-1m)"]
     DS --> EDA["EDA (Exploratory Data Analysis)"]
 
     DS --> TSFM[Generate Transformed Images at Multiple Resolutions]

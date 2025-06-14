@@ -1,10 +1,9 @@
+_freeze
+_site
+.history
+.jupyter_cache
 .quarto
 .venv
 setup.md
 deploy.sh
-_site.zip
-_site
-_freeze
-.history
 /.quarto/
-.jupyter_cache/
