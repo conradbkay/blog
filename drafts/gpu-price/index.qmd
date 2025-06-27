@@ -3,7 +3,7 @@ title: "Should you Rent or Buy GPUs?"
 author: "Conrad Kay"
 date: "2025-05-30"
 categories: [ML]
-image: "assets/cam-thumbnail.jpg"
+# image: "assets/"
 format: html
 echo: false
 ---
@@ -30,4 +30,4 @@ Here's how I'd help someone choose between renting and buying GPUs:
 
 - The smaller your dataset, the better renting is. The best case is if you can just stream cloud data faster than your model processes it
 - You can find cheaper rentals if you can tolerate the operator potentially accessing your code or data. But most of the time [your source code is worthless](https://hiringengineersbook.com/post/autonomy/) and it would be a lot of work for them to go through everyone's stuff, likely with no return
-- Interruptible/spot instances can be a lot cheaper, but you need relatively fast setup, and a way to save and load your progress
+- Interruptible/spot instances are a lot cheaper, but you need reasonably fast setup, and a way to save and load your progress

@@ -17,7 +17,7 @@ listing:
     sort-ui: false
     filter-ui: false
     fields: [date, title, reading-time]
-    feed: true
+    feed: true # rss
     exclude:
       categories: ["ML", "featured"]
 page-layout: full

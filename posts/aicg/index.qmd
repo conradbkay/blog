@@ -2,6 +2,7 @@
 title: "Deep Comic Book Grading"
 author: "Conrad Kay"
 date: "2025-04-02"
+last-modified: "2025-06-21"
 categories: [ML, featured]
 image: "assets/cam-thumbnail.jpg"
 format: html
@@ -10,11 +11,11 @@ echo: false
 
 **Update**: You can benchmark yourself against the model's exact predictions here: <https://ai.conradkay.com/grade>
 
-Attempting this project as a web developer without a math or data science background was a long shot, but I ended up getting better results than I thought was possible.
+Attempting this project as a web developer without a math or data science background was a long shot, and I went into it with only the expectation that I'd learn a lot from my failures. I soon got better results than I thought was possible and started iterating on the initial concept.
 
-# Background
+## Background
 
-This a comic graded and encapsulated by CGC, which was the first comic book grading service and remains the most popular.
+This a comic graded and encapsulated by CGC, which was the first comic book grading service and remains the most popular. The only jargon I'll use is that these are "slabbed" comics, as opposed to a regular "raw" comic.
 
 ::: {layout-ncol=3}
 ![](assets/power2-f.jpg){height="25%"}
@@ -22,43 +23,40 @@ This a comic graded and encapsulated by CGC, which was the first comic book grad
 ![](assets/power2-b.jpg){height="25%"}
 :::
 
-There are some companies (AGS) which use AI to grade trading cards, but nothing has been used for comic books except asking chatbots. 
+There are [some](https://agscard.com/) [companies](https://taggrading.com/) which use AI to grade trading cards, but nothing has been used for comic books except asking chatbots. 
 
-After trying a few popular models I began to suspect they were basically spitting out the "average" grade, which gets lower as the comic's age increases. To test that I gave them some very high-grade old comics, and a couple lower-grade modern comics.
-
-Prompt: "As a professional CGC grader, use the provided scans of the front and back cover to assign a grade from 0.5 to 10." Prompting to describe any the defects *before* assigning a grade didn't seem to help.
+After trying a few popular models I began to suspect they were basically spitting out the "average" grade based on the comic's age. To test that I gave them some high-grade old comics, and a couple low-grade modern comics. Prompt: "As a professional grader, use the provided scans of the front and back cover to assign a grade from 0.5 to 10." Prompting to describe any the defects *before* assigning a grade didn't seem to help.
 ```{python}
 exec(open('llm-bench.py').read())
 ```
 <br />
-They barely did better than just random guessing, and the explanations were very well-written but ultimately BS. For many tasks they have remarkable vision capabilities (see <https://www.astralcodexten.com/p/testing-ais-geoguessr-genius>), just this one doesn't gel with their training.
+They barely did better than random guessing, and the explanations were very well-written but ultimately BS. For many tasks they have remarkable vision capabilities (see <https://www.astralcodexten.com/p/testing-ais-geoguessr-genius>), just this one doesn't gel with their training.
 
 ## Gathering Data
 
-Getting (good) data is the hardest part for most real-world ML projects. But there's plenty of excellent datasets of all sizes available for free, and the process of obtaining data depends so much on the task that I get too in the weeds here. Essentially it was a lot of scraping sales listings.
+Getting high-quality data is the hardest part of many real-world ML projects. But there's plenty of excellent datasets of all sizes available for free, and the process of obtaining data depends so much on the task that I won't get too in the weeds here. Essentially it was a lot of scraping sales listings.
 
-For just CGC graded comics, I got ~2.1m pairs of images, or ~7TB of .jpg files which is rather annoying.
+For slabbed comics, I got ~2.5m pairs of images, or ~8TB of .jpg files which is rather annoying to deal with.
 
-eBay listings have 0-12 images, each at most 1600x1600. Anyone can post on eBay so the images are very diverse and unstructured. I'm scraping the data for now, but to be usable for training they'd need additional filtering and processing.
-
-## Exploratory Data Analysis (EDA)
-
+<!--
 Some things to note about grading:
 
 - The front and back cover are equally important, but it's rare for the interior pages to impact the grade
 - Manufacturing defects are mostly ignored except for grades above 9.8, which are extremely rare
 - Cheaper comics aren't worth grading unless a high grade is expected (often 9.8 or bust)
 - Older comics are much more scarce, but therefore expensive and more likely to be graded
-
-I made a bunch of visualizations and reports to understand the data better. This heatmap is probably the most succinct
-
-![](assets/year-grade.jpg)
+-->
 
 ## Designing a Dataset
 
-There's a few unique and interesting constraints here:
 
--
+
+I made a ton of visualizations and reports to understand the data better. This heatmap of slabbed comics is probably the most succinct:
+
+![](assets/year-grade.jpg)
+
+There's a few interesting constraints here:
+- 
 
 <!--
 At first I just limited the number of comics in each grade, then I did year+grade buckets. But it still wasn't diverse enough so I made it 
@@ -70,28 +68,44 @@ Each year grouping is treated as a separate dataset, and an initial pass just de
 I made each year (range) a heap, 
 
 This maximizes image diversity, smooths the total distribution of grades, and limits the effectiveness of grading based on year or the specific comic
-
-The validation set is created first from a random 10% of the data, so it can't steal all the highest score examples. A better way than random splitting would be to make every data source (what site/seller) exclusive to either the training or validation set. That way it's clear if the model doesn't generalize to things like different camera usage, backgrounds, or scanner settings.
-
-I didn't bother creating a test set since new data comes in fast enough I could just create one on the fly.
  
 ![](assets/year-grade-ds.jpg)
 
-# Image Pre-processing
+The validation set is created first from a random 10% of the data, so it can't steal all the highest score examples. A better way than random splitting would be to make every data source (what site/seller) exclusive to either the training or validation set. That way it's clear if the model doesn't generalize to factors like different camera usage, backgrounds, or scanner settings.
 
-224x224 is the most common resolution for computer vision models. Most of the combined front and back cover scans are rougly 4000x3000, or 239 times as many pixels.
+## Image Pre-processing
 
-I don't have VC money to burn, so if I don't want to be financially ruined the name of the game is to keep as much information as possible while using the least number of pixels.
+224x224 is the most common resolution for computer vision models. But most of the combined front and back cover scans are around 4000x3000, 239 times as many pixels. The price increase will be more than linear, especially to keep similar training speed.
 
-If we give a model uncropped images of CGC comics, It'll just cheat by looking at the big grade number, so it's necessary to remove the label, and ideally the other sides to remove meaningless pixels. Here's what I tried:
+I don't have VC money to burn, so if I don't want to be financially ruined the name of the game is to maximize information and minimize image size.
 
-- Just removing a fixed percent from each side works well enough as a baseline if images are cropped to the case already 
-- Non-ML methods using [OpenCV](https://opencv.org/) often failed with several boundaries close together, or light being wonky passing through several layers of transparent plastic
-- A custom algorithm to generate candidate edges from all 4 directions independently. Worked well when tuned for specific cases but didn't generalize well to outliers in perspective, lighting, rotation, etc.
-- A [DETR](https://huggingface.co/docs/transformers/en/model_doc/detr) object detection model. Handles slabbed (CGC) and ungraded comics. Fast, but requires manually labeling some images with bounding boxes. 
-I found running [label-studio](https://github.com/HumanSignal/label-studio) locally the easiest out of the popular annotation tools, but I ended up building my own simple web app to do it. That was honestly less difficult since I had easier control over the input and output, and LLMs are good at trivial projects like that.
+### Cropping
 
-Most of the grade impact is in the pixels at the edges of each cover, so the simplest approach is to only use the edges. Unfortunately there's no easy way to remove the center of an image like cropping to remove sides.
+If we give a model full images of CGC comics, It can obviously cheat by looking at the big grade number, so it's necessary to remove the label, and ideally crop as close to the actual comic to remove meaningless pixels. 
+
+As it turns out, I underestimated the difficulty of finding a rectangle within another rectangle.
+
+- v1: Just removing a fixed percent from each side works well enough as a baseline, as long as images are already cropped to the slab itself 
+- v1.5: Non-ML methods using [OpenCV](https://opencv.org/) often failed because of several boundaries close together, or comics the same color as the background
+- v2: A [DETR](https://huggingface.co/docs/transformers/en/model_doc/detr) object detection model. Requires manually labeling some images with bounding boxes. 
+- v3: Training a U-Net model on top of a segmentation backbone to produce one heatmap for each corner and convert them into points. By assuming the comic is a rectangle perspective warping is applied
+
+The U-Net model's code was fairly complicated, but it outputs points on average 0.15% away from what I selected, or roughly a pixel off in it's input images. It's probably more consistent than I am, very impressive since it only uses a `tiny` SAM 2.1 backbone and images smaller than it was originally trained at.
+
+This is the aspect ratios for the resulting crops:
+![](assets/aspect.jpg)
+
+Out of the popular annotation tools, I found [label-studio](https://github.com/HumanSignal/label-studio) to be the easiest, but it still frustrated me quite a bit. I ended up building my own web app to do the point annotation, which took maybe 2 hours in total since LLMs are good at the bulk of trivial projects like that. 
+
+![](assets/label.jpg)
+
+It has all the features I want, and only the features I want. The biggest advantage is that I have full control over the input/output. I can write any query for what to label, and the output is written directly to the database in a usable format.
+
+### Mangling
+
+Most of the grade impact is in the pixels at the edges of each cover, so the simplest approach is to only use the edges. Unfortunately there's no easy way to remove the center of an image like there is by cropping to remove sides.
+
+My approach was to divide each cover into 4 sides. A fixed amount `x` controls how far 
 
 Doing this for both covers, there's 2 sets of 4 images. Images are oriented to be vertical, scaled to the same height, and mirrored so that the edges are on the left.
 
@@ -117,17 +131,23 @@ Doing this for both covers, there's 2 sets of 4 images. Images are oriented to b
 
 :::
 
-Later I experimented with adding the centers, but proportionally smaller. Metrics didn't improve as much as I would have liked, so maybe differing scales within an image is a bad idea.
+Later I experimented with adding the centers, but proportionally smaller. Metrics didn't improve as much as I hoped, so I'll have to investigate whether the different scale within an input is hard for it to learn, the center matters less than I thought, or the defects there need higher resolution to detect.
 
-# Training
+If instead the left and right side include the corners, using `x=(2w-h)/4` means the top/bottom are exactly half as large as the left/right. 
+
+We can either produce 6 columns per cover by splitting the left and right in half, or 3 columns and 2 rows by stacking the top and bottom vertically.
+
+![](assets/front-cols-v2.jpg)
+
+Only the center is resized, so it's possible to reconstruct the rest of the image perfectly, then fit the center into the missing space.
+
+## Training
 
 All of the models I used had already been pre-trained on millions of images. Even though most of what they learned won't be useful, anything is better than starting from scratch.
 
 [timm](https://github.com/huggingface/pytorch-image-models) is a fantastic library with implementations and weights for many different models.
 
-The DINO training method (<https://arxiv.org/abs/2104.14294>) is really interesting, and blew basically all of the 20 or so architectures I tested out of the water.
-
-dinov2-base (87m parameters) got 0.717 MAE keeping the model frozen and just training the final classifiers. That's shockingly good.
+The DINO training method (<https://arxiv.org/abs/2104.14294>) is really interesting, and did better than all of the 20 or so other architectures I tried. dinov2-base (87m parameters) got 0.717 MAE keeping the model frozen and just training the final classifiers, a shockingly good result considering how different these images are from what it trained on.
 
 <!--
 The approach of not using any label is quite fascinating. As a crude analogy, compare it to giving a bunch of paintings to someone who doesn't know much about art, and having them sort it into groups/piles 
@@ -137,23 +157,21 @@ If you gave several versions of painting, with random flipping/mirroring, croppi
 If instead of one person, it was closer to a game of telephone where nobody spoke a common language, they'd probably learn to just focus on the important parts
 -->
 
-# Benchmark
+## Benchmarking
 
 The simplest metric I'm using is mean absolute error (MAE), basically how far off a guess is on average on the 0.5-10 scale.
 
 To measure human performance, I used posts from <https://boards.cgccomics.com/forum/42-hey-buddy-can-you-spare-a-grade/> where they say the official grade once it comes back from CGC. The images tend to be very high quality with a lot of different angles. While there might be a bias towards people posting harder to grade comics, the validation set is very biased towards difficult/outlier examples. Across 34 posts there were 151 predictions, with an MAE of 0.80. Using the average guess for each post results in an 0.74 MAE.
 
-On the validation set, I graded 50 examples myself using full resolution scans, and got an MAE of 0.55
+On the validation set, I graded 50 examples myself using full resolution scans, and got an MAE of 0.55. Good for a human but even dinov2_small with it's 22 million parameters beat me.
 
-Even dinov2_small with it's 22 million parameters beat me
-
-It didn't really feel like there was a clear weakness. Analyzing the largest differences in the model's prediction and the official grade, I found myself usually siding with the model, meaning there were just defects not visible from the 2 images. 
-
-Funny enough a lot of them were just due to egregious errors and grades. 
+It didn't feel like there was any clear weakness with the model. Analyzing the largest differences in the model's prediction and the official grade, I found myself usually siding with the model, meaning there were just defects not visible from the images. And funny enough a lot of them were due to egregious mistakes from the grading company, not the model. 
 
 ![]()
 
-# Grad-CAM
+The most obvious advantage of AI over humans is consistency. The model will always give the same grade if the same input images are used,
+
+## Grad-CAM
 
 ![The front and back cover are almost identical for this comic, so it looks a bit like certain columns were duplicated](assets/cam.jpg)
 
@@ -163,11 +181,11 @@ Generating these visualizations is fairly simple, in both code and computation:
 - That gets normalized and reshaped into a grayscale image matching our input image's dimensions
 - OpenCV makes it easy to use a colormap (Turbo in this case) so that instead of displaying from black to white, it shows blue to yellow to red
 
-These give a way to basically check the model's work. If it misses anything that seems significant, the grade is probably lower than it predicts. The model paying attention to things which aren't defects is more nuanced. For flawless comics it might focus the most on sharp corners. 
+These give a way to check the model's work. If it misses anything that seems significant, the grade is probably lower than it predicts. The model paying attention to things which aren't defects is more nuanced. For flawless comics it might focus the most on sharp corners, but it often focused somewhat on barcodes or logos.
 
-# Multi-task Learning
+## Multi-task Learning
 
-Right now the model doesn't use any language data, but it would be nice if it could describe the defects like multimodal models do. Luckily there's a number on each comic which can be used to visit a web page that includes information about the comic and grade, and has "grading notes" a bit less than half the time.
+Right now the model doesn't use any language data, but it would be nice if it could describe the defects like multimodal models do. Luckily there's an ID on each comic which can be used to visit a web page containing information about the comic and grade, and has "grading notes" a bit less than half the time.
 
 Usually there's 1-4 defects listed, which follow a rough format:
 
@@ -179,20 +197,85 @@ In my sample there's ~20k unique descriptions, with 80% of them occuring less th
 
 For now I'm ignoring positional information (like "top right of back cover") since that would increase the size by >50x, and Grad-CAM can supplement that information in the results.
 
-I extracted 36 unique and common defects, and converted words measuring the impact (severity, size, frequency) to a number (0-1)
+I extracted 31 unique defects, and converted words measuring the impact (severity, size, frequency) to a number (0-1). I did basically the same thing with the restoration info.
 
-I did the same thing with the restoration info, while page color and year were more straightforward. 
+Page color and year were more straightforward since there's a single target value.
 
 I wouldn't say it's intuitive to add this these the existing model which focuses on grading. With most physical systems (a car for example), they're either specialized and good at just a few things, or general and decent at many things. Deep learning models are closer to monsters than machines, consuming as much data as possible, and more outputs means more data. <!-- lottery ticket hypothesis, dropout, etc -->
+
+It makes more sense if instead of thinking about the grader as one model, . There's the backbone/encoder 
 
 <!--
 I'm pretty sure it's cheating on restoration based on the label being purple, . Must be that somehow light is diffracting, or the camera is adjusting for the different color. Scary smart, the vibe training these things is somewhere between being in Jurassic Park and talking to Hannibal Lecter.
 -->
+
 <!--
 It would be interesting to train a model to grade just from the grader's notes. It wouldn't be that useful, but it would help to understand them more and probably lead to designing better targets for the model.
 -->
 
-# Entire Process
+## v2.0 Ideas
+
+### Contrastive Learning
+
+So far the model to being asked to somehow figure out,
+
+With the current method of dataset creation, only 2% of the training set wouldn't have a pair, or 4% for triplets
+
+![](assets/canon-count.jpg)
+
+<!-- Distillation sounds like it should be complex, but it's basically just training a model on the output probabilities of a better model. This should be quite useful for the language data because it means no defects are skipped like they might be in the actual dataset. For the grade this should help too, since there's more information in the probability distribution than just a single number-->
+
+### More Data
+
+So far the model has only been trained on slabs, which limits the available data somewhat. Another issue is that the input images are different, since the slabs have an outer plastic shell and an inner bag between the comic and camera. Glare/reflection is the biggest, but the sources I used are good at minimizing this or have expensive scanners. Scratches and scuffs
+
+By comparing the model's output on images of the same comic before and after it was graded by CGC, we can convert between slabbed and raw grades. The adjustment should be different based on the grade, since lower grade comics will have more obvious defects which don't get obscured as much.
+
+The problem with using is that every seller grades differently.
+
+Imagine we take several different graders. We can get a bias score, and a consistency score. We can arbitrarily set a consistency of 1 as equaling the model by measuring the standard deviation. The model is slightly biased towards grading too high since sometimes it doesn't catch a defect, usually since it's impossible based on the input.
+
+![](assets/bias.jpg)
+
+Basically we can create a model to convert one of their grades into the probabilities our model would output on average. So if they gave a comic an 8.5, we might output 40% 8.5, 30% 9.0, 15% 8.0, 0.4% 9.6, etc. 
+
+Essentially, that converts their grading format-- which is usually the same 0.5-10, but often less precise or biased in a specific direction--into CGC's format. It's fairly unlikely. The only thing to really worry about is more specific biases. Training on worse/less applicable data first is a common theme in ML, and should greatly mitigate this. 
+<!--
+### eBay
+
+eBay listings have 0-12 images, each at most 1600x1600. Anyone can post on eBay so the images are very diverse and unstructured. To be usable for training they'd need additional filtering and processing.
+-->
+
+### Confidence
+
+All of the model's final outputs are in the form of probabilities, but they seem to always have the same distribution. 
+
+## Takeaways 
+
+For everything I eventually figured out there was much trial-and-error, looking at data, analyzing failures, and getting stuck or confused.
+
+The potentially huge advantage you can have over someone much more experienced in ML is specific knowledge about some domain, or unique access to data. There's probably not something that immediately comes to mind but maybe you know someone, or having the proverbial "hammer" will make some "nail" stick out in the future.
+
+### Useful Resources
+
+I made this blog with [Quarto](https://quarto.org), which was easy to set up but seems very capable
+
+[Python for Data Analysis by Wes McKinney (the creator of pandas)](https://github.com/wesm/pydata-book)
+
+[3blue1brown Deep Learning](https://www.youtube.com/watch?v=aircAruvnKk&list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi)
+
+<https://www.youtube.com/@AndrejKarpathy>
+
+[fast.ai Practical Deep Learning for Coders Course](https://www.youtube.com/watch?v=8SF_h3xF3cE&list=PLfYUBJiXbdtSvpQjSnJJ_PmDQB_VyT5iU)
+
+## Technical Details
+
+Probably skip this part if you don't have PyTorch or ML experience
+
+I found the FastAI defaults (which haven't changed much in 7 years) very difficult to beat. There's quite a bit of randomness in training, so even if I could get a slight improvement it's hard to say whether it was just luck.
+
+
+### Entire Process
 
 <!--
     %% Data Acquisition
@@ -230,58 +313,3 @@ flowchart TD
       Grad-CAM Visualizations
     ]
 ```
-
-<!--
-# Contrastive Training
-
-So far the model to being asked to somehow figure out
-
-The model realistically has no idea.
-
-I think it's helpful to think about how we're training two models, 
-
-With the current method of dataset creation, only 2% of the training set wouldn't have a pair, of 4% for triplets
-
-![](assets/canon-count.jpg)
--->
-
-# v2.0 Ideas
-
-<!-- Distillation sounds like it should be complex, but it's basically just training a model on the output probabilities of a better model. This should be quite useful for the language data because it means no defects are skipped like they might be in the actual dataset. For the grade this should help too, since there's more information in the probability distribution than just a single number 
-
-## More Data
-
-So far the model has only been trained on already CGC graded comics. 
-
-Imagine we take several different graders. We can get a bias score, and a consistency score. It doesn't matter much how accurate the model is, as long as it's grades average out to being correct it will have a bias of 0, and we can arbitrarily set a consistency of 1 as equaling the model.
-
-Basically we can create a model to convert one of their grades into the probabilities our model would output on average. So if they gave a comic an 8.5, we might output 40% 8.5, 30% 9.0, 15% 8.0, 0.4% 9.6, etc. 
-
-Essentially, that converts their grading format-- which is usually the same 0.5-10, but often less precise or biased in a specific direction--into CGC's format. It's fairly unlikely. The only thing to really worry about is more specific biases. Training on worse/less applicable data first is a common theme in ML, and should greatly mitigate this. 
-
-eBay and quality score
--->
-
-## Takeaways 
-
-For everything I eventually figured out there was much trial-and-error, looking at data, analyzing failures, and getting stuck or confused.
-
-The potentially huge advantage you can have over someone much more experienced in ML is specific knowledge about some domain, or unique access to data. There's probably not something that immediately comes to mind but maybe you know someone, or having the proverbial "hammer" will make some "nail" stick out in the future.
-
-## Resources I found useful
-
-I made this blog with [Quarto](https://quarto.org), which was easy to set up but seems very capable
-
-[Python for Data Analysis by Wes McKinney (the creator of pandas)](https://github.com/wesm/pydata-book)
-
-[3blue1brown Deep Learning](https://www.youtube.com/watch?v=aircAruvnKk&list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi)
-
-<https://www.youtube.com/@AndrejKarpathy>
-
-[fast.ai Practical Deep Learning for Coders Course](https://www.youtube.com/watch?v=8SF_h3xF3cE&list=PLfYUBJiXbdtSvpQjSnJJ_PmDQB_VyT5iU)
-
-## Technical Details
-
-Probably skip this part if you don't have PyTorch or ML experience
-
-I found the FastAI defaults (which haven't changed much in 7 years) really difficult to beat. There's quite a bit of randomness in training, so even if I could get a slight improvement it's hard to say whether it was just luck.

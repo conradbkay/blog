@@ -6,20 +6,24 @@ draft: true
 categories: []
 ---
 
-I've mostly worked on my own projects, so I haven't *needed* to give that many estimates.
+I've mostly worked on my own projects, so I haven't *needed* to give a lot of estimates. 
 
 The plan is as follows: before I touch any code I'll specify a task, do some planning, then estimate a median and 90th percentile for how long I think it'll take. When I'm done I'll write a bit about how it went and what caused any slowdowns.
 
-It'll be nice to have data for what I should multiply my intuited estimates by. I'll try my best but we all know it'll be > 1 because...
+It'll be nice to have data for what I should multiply my intuited estimates by. I'll try my best but we all know it'll be > 1 because:
 
 > Hofstadter's law: It always takes longer than you expect, even when you take into account Hofstadter's law.
 
-I started a basic project management repo 6 years ago now, just to learn fullstack web dev.
+I started a basic project management app 6 years ago now, just to learn fullstack development.
 
-It was on Heroku back when they had a free tier, so the first task will be to get it hosted again. I don't feel like paying for more domains so it'll live at <http://mantella.conradkay.com/>. 
+It was on Heroku back when they had a free tier, so the first task will be to get it hosted again. I don't feel like paying for more domains so it'll live at <http://mantella.conradkay.com/> for now. 
 
-I also want to use pm2, Dockerize it, and make deploying to prod take 1 command. Sounds like maybe 2 hours to me. Nothing crazy and I've gone through most of the headaches before so I'll go with 2x for the p90.
+I also want to use pm2, Dockerize it, and make deploying to prod take 1 command. Sounds like maybe 2 hours to me. Nothing crazy and I've gone through most of the headaches before so I'll go with 2x that for the p90.
 
 ![](assets/task-1-time.jpg)
 
-Smashed it. 79 minutes out of the expected 120. I ended up refactoring some code and fixing a bug with the text editor, which I hadn't thought about doing doing.
+79 minutes, maybe I work better when the clock is ticking. I ended up refactoring some code and fixing a bug with the text editor, both of which I hadn't anticipated.
+
+On Day 2 I forgot to do anything for this, maybe since I was doing more exploratory development and going wherever the code took me. But I thought about the parallels to this and my last project. Then I thought it could be cool to have LLMs try and estimate the same tasks as I do, and see if they fare any better. 
+
+That could be a bit annoying to implement, so I thought about just writing a quick something to do it automatically for tasks in Mantella.

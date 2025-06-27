@@ -7,7 +7,7 @@ project:
 website:
   title: "conradkay.com"
   site-url: https://blog.conradkay.com
-  description: Conrad Kay's blog
+  description: "Conrad Kay's blog"
   navbar:
     right:
       - about.qmd
