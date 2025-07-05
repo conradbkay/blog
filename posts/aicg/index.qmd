@@ -34,9 +34,9 @@ They barely did better than random guessing, and the explanations were very well
 
 ## Gathering Data
 
-Getting high-quality data is the hardest part of many real-world ML projects. But there's plenty of excellent datasets of all sizes available for free, and the process of obtaining data depends so much on the task that I won't get too in the weeds here. Essentially it was a lot of scraping sales listings.
+I scraped what I'm guessing is a large majority of the comics.
 
-For slabbed comics, I got ~2.5m pairs of images, or ~8TB of .jpg files which is rather annoying to deal with.
+For slabbed comics, I got ~2.7m pairs of images, or ~8TB of .jpg files which is rather annoying to deal with.
 
 <!--
 Some things to note about grading:
@@ -48,8 +48,6 @@ Some things to note about grading:
 -->
 
 ## Designing a Dataset
-
-
 
 I made a ton of visualizations and reports to understand the data better. This heatmap of slabbed comics is probably the most succinct:
 
@@ -75,7 +73,7 @@ The validation set is created first from a random 10% of the data, so it can't s
 
 ## Image Pre-processing
 
-224x224 is the most common resolution for computer vision models. But most of the combined front and back cover scans are around 4000x3000, 239 times as many pixels. The price increase will be more than linear, especially to keep similar training speed.
+224x224 is the most common resolution for computer vision models. But most of the combined front and back cover scans are around 4000x3000, 239 times as many pixels. The price increase will be more than linear in order to keep the same training speed.
 
 I don't have VC money to burn, so if I don't want to be financially ruined the name of the game is to maximize information and minimize image size.
 
