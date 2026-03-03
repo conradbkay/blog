@@ -1,9 +1,14 @@
 _freeze
 _site
+_site_conradkay
+_site_snapmda
+setup_files
 .history
 .jupyter_cache
 .quarto
 .venv
 setup.md
 deploy.sh
+
 /.quarto/
+index.quarto_ipynb

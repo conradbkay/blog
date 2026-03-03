@@ -1,42 +1,38 @@
 ---
-title: "Conrad Kay"
-listing:
-  - id: featured-listing
-    contents: [posts]
-    type: default
-    categories: false
-    sort-ui: false
-    filter-ui: false
-    fields: [image, date, title, word-count, reading-time, categories]
-    include:
-      categories: ["ML", "featured"]
-  - id: notes-listing
-    contents: [posts]
-    type: grid
-    categories: true
-    sort-ui: false
-    filter-ui: false
-    fields: [date, title, reading-time]
-    feed: true # rss
-    exclude:
-      categories: ["ML", "featured"]
 page-layout: full
 title-block-banner: true
 execute:
   cache: true
 jupyter: python3
+listing:
+  - id: featured
+    contents:
+      - "posts/**/index.qmd"
+      - "snapmda/**/index.qmd"
+    type: default
+    sort: "date desc"
+    fields: [image, date, title, categories]
+    include:
+      categories: [Featured]
+  - id: listing
+    contents: 
+      - "posts/**/index.qmd"
+    type: grid
+    sort: "date desc"
+    fields: [date, title, reading-time]
+    exclude:
+      categories: [Featured]
 ---
 
 ```{=html}
 <style>
-#featured-listing {
-  border-left: 4px solid #3498db;
+#featured {
   padding-left: 1.5rem;
   margin-bottom: 3rem;
 }
 
 #notes-listing {
-  border-left: 4px solid #95a5a6;
+  border-left: 2px solid #95a5a6;
   padding-left: 1.5rem;
 }
 
@@ -52,12 +48,13 @@ h2 {
 </style>
 ```
 
+
 ## Featured
 
-::: {#featured-listing}
+::: {#featured}
 :::
 
-## Notes & Tidbits
+## Posts
 
-::: {#notes-listing}
+::: {#listing}
 :::

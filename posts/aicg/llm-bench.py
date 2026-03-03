@@ -4,14 +4,15 @@ import numpy as np
 
 data_dict = {
     'Model': [
-        "Claude 3.7 Sonnet", "Claude 3.7 Sonnet",
-        "ChatGPT (o4-mini)", "ChatGPT (o4-mini)",
-        "Gemini 2.5 Pro", "Gemini 2.5 Pro", "Gemini 2.5 Pro", "Gemini 2.5 Pro"
+        "Gemini 2.5 Pro", "Gemini 2.5 Pro",
+        "Claude 3.7 Sonnet", "ChatGPT (o4-mini)",
+        "Claude 3.7 Sonnet", "ChatGPT (o4-mini)",
+        "Gemini 2.5 Pro", "Gemini 2.5 Pro"
     ],
-    'Comic_Years': [1965, 1963, 1965, 1963, 1944, 1959, 2006, 1988],
-    'Actual_Grades': [9.4, 9.4, 9.4, 9.4, 9.8, 9.4, 6.0, 4.0],
+    'Comic_Years': [1944, 1959, 1963, 1963, 1965, 1965, 1988, 2006],
+    'Actual_Grades': [9.8, 9.4, 9.4, 9.4, 9.4, 9.4, 4.0, 6.0],
     'Guessed_Grades_Str': [
-        "6.0", "6.0", "7.5", "5.5-6.0", "5.0", "4.5-5.5", "9.6", "7.0-7.5"
+        "5.0", "4.5-5.5", "6.0", "5.5-6.0", "6.0", "7.5", "7.0-7.5", "9.6"
     ]
 }
 

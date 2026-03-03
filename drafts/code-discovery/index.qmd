@@ -1,7 +1,7 @@
 ---
 title: "Finding Good Code"
 author: "Conrad Kay"
-date: "2025-05-17"
+date: "2025-07-06"
 draft: true
 categories: []
 ---

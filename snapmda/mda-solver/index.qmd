@@ -1,0 +1,10 @@
+---
+title: "Creating an MDA \"Solver\""
+author: "Conrad Kay"
+date: "2025-07-24"
+draft: false
+echo: false
+format: "html"
+categories: [MDA, Featured]
+---
+

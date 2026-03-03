@@ -2,9 +2,9 @@
 
 ## Linux
 
-python3 -m venv .venv
+uv venv
 source .venv/bin/activate
-python -m pip install jupyter matplotlib plotly pandas jupyter-cache
+uv pip install jupyter matplotlib plotly pandas jupyter-cache
 
 ## Install Quarto
 

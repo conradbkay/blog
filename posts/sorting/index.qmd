@@ -3,9 +3,9 @@ title: "Sorting Performance"
 author: "Conrad Kay"
 date: "2025-05-16"
 draft: false
-format: html
 echo: false
-categories: [notes, performance]
+format: html
+categories: [Notes, Performance]
 ---
 
 Results are for sorting `n` random floats generated using `Math.random()` in Node.js and `random.random()` in Python 3.12

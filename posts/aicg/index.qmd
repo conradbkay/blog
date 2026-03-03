@@ -3,7 +3,7 @@ title: "Deep Comic Book Grading"
 author: "Conrad Kay"
 date: "2025-04-02"
 last-modified: "2025-06-21"
-categories: [ML, featured]
+categories: [ML, Featured]
 image: "assets/cam-thumbnail.jpg"
 format: html
 echo: false
@@ -11,11 +11,11 @@ echo: false
 
 **Update**: You can benchmark yourself against the model's exact predictions here: <https://ai.conradkay.com/grade>
 
-Attempting this project as a web developer without a math or data science background was a long shot, and I went into it with only the expectation that I'd learn a lot from my failures. I soon got better results than I thought was possible and started iterating on the initial concept.
+Attempting this project as a web developer without a math or data science background was a long shot, and I went into it with only the expectation that I'd learn a lot from trying. I got better results than I thought was possible, 
 
 ## Background
 
-This a comic graded and encapsulated by CGC, which was the first comic book grading service and remains the most popular. The only jargon I'll use is that these are "slabbed" comics, as opposed to a regular "raw" comic.
+This a comic graded and encapsulated by CGC, which was the first comic book grading company and remains the most popular. The only jargon I'll use is that these are "slabbed" comics, as opposed to a regular "raw" comic.
 
 ::: {layout-ncol=3}
 ![](assets/power2-f.jpg){height="25%"}
@@ -25,7 +25,7 @@ This a comic graded and encapsulated by CGC, which was the first comic book grad
 
 There are [some](https://agscard.com/) [companies](https://taggrading.com/) which use AI to grade trading cards, but nothing has been used for comic books except asking chatbots. 
 
-After trying a few popular models I began to suspect they were basically spitting out the "average" grade based on the comic's age. To test that I gave them some high-grade old comics, and a couple low-grade modern comics. Prompt: "As a professional grader, use the provided scans of the front and back cover to assign a grade from 0.5 to 10." Prompting to describe any the defects *before* assigning a grade didn't seem to help.
+After trying a few popular models I began to suspect they were essentially cheating by spitting out the "average" grade based on the comic's age. To test that I gave them some high-grade old comics, and a couple low-grade modern comics. Prompt: "As a professional grader, use the provided scans of the front and back cover to assign a grade from 0.5 to 10." Prompting to describe all the defects *before* assigning a grade seemingly doesn't help.
 ```{python}
 exec(open('llm-bench.py').read())
 ```
@@ -34,9 +34,9 @@ They barely did better than random guessing, and the explanations were very well
 
 ## Gathering Data
 
-I scraped what I'm guessing is a large majority of the comics.
+I scraped what is likely a majority of high-resolution images of graded comics
 
-For slabbed comics, I got ~2.7m pairs of images, or ~8TB of .jpg files which is rather annoying to deal with.
+For slabbed comics, I got ~2.7m pairs of images, or ~8TB of .jpg files which is rather annoying to deal with
 
 <!--
 Some things to note about grading:
@@ -84,9 +84,10 @@ If we give a model full images of CGC comics, It can obviously cheat by looking 
 As it turns out, I underestimated the difficulty of finding a rectangle within another rectangle.
 
 - v1: Just removing a fixed percent from each side works well enough as a baseline, as long as images are already cropped to the slab itself 
-- v1.5: Non-ML methods using [OpenCV](https://opencv.org/) often failed because of several boundaries close together, or comics the same color as the background
-- v2: A [DETR](https://huggingface.co/docs/transformers/en/model_doc/detr) object detection model. Requires manually labeling some images with bounding boxes. 
-- v3: Training a U-Net model on top of a segmentation backbone to produce one heatmap for each corner and convert them into points. By assuming the comic is a rectangle perspective warping is applied
+- v2: Non-ML methods using [OpenCV](https://opencv.org/) often failed because of several boundaries close together, or on comics the same color as the background
+- v3: A [DETR](https://huggingface.co/docs/transformers/en/model_doc/detr) object detection model. Requires manually labeling some images with bouding boxes. 
+- v4: Training a U-Net model on top of a segmentation backbone to produce one heatmap for each corner and converting those into points. A bounding box is created as (x_min, y_min, x_max, y_max)
+- v4.1: Correcting for rotation and perspective using OpenCV
 
 The U-Net model's code was fairly complicated, but it outputs points on average 0.15% away from what I selected, or roughly a pixel off in it's input images. It's probably more consistent than I am, very impressive since it only uses a `tiny` SAM 2.1 backbone and images smaller than it was originally trained at.
 
@@ -268,9 +269,7 @@ I made this blog with [Quarto](https://quarto.org), which was easy to set up but
 
 ## Technical Details
 
-Probably skip this part if you don't have PyTorch or ML experience
-
-I found the FastAI defaults (which haven't changed much in 7 years) very difficult to beat. There's quite a bit of randomness in training, so even if I could get a slight improvement it's hard to say whether it was just luck.
+I found the FastAI defaults (which haven't changed much in 7 years) very difficult to beat. There's a fair amount of randomness in training, so even if I could get a slight improvement it's hard to say whether it was just luck.
 
 
 ### Entire Process
@@ -282,32 +281,3 @@ I found the FastAI defaults (which haven't changed much in 7 years) very difficu
     QL -!!-> TRQL(Train Predictive Model and Run)
     TRQL -!!-> DB
 -->
-```{mermaid}
-flowchart TD
-    SCR[Scrape Marketplaces]
-    SCR --> DB[Database]
-
-    DB --> DL[Download Images]
-    
-    DL --> ANCR[Manually Crop]
-    ANCR --> TRCR[Train DETR Crop Model]
-    TRCR --> TSFM
-
-    DL --> OCR("Certificate # from OCR Model")
-    OCR --> SCR2("Scrape Grader's Registry (Restoration, Defects)")
-    SCR2 --> DB
-
-
-    DB --> SORT["Canonization, Filtering, and Scoring"]
-    %% Splitting
-    SORT --> DS["Create Validation Set (10k) then Training Sets (10k-1m)"]
-    DS --> EDA["EDA (Exploratory Data Analysis)"]
-
-    DS --> TSFM[Generate Transformed Images at Multiple Resolutions]
-    TSFM --> TR[Train Model]
-    TR --> VIS[
-      Biggest Losses
-      Bias / Skew
-      Grad-CAM Visualizations
-    ]
-```
